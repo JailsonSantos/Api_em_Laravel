@@ -1,0 +1,109 @@
+# Versões utilizadas
+- Composer Version 2.1.12
+- PHP Version 8.0.0
+- Laravel Version 4.2.9
+
+# Criando um projeto
+- laravel new ToDoList
+
+# Iniciando o projeto
+- php artisan serve
+
+# Criando Rotas
+- api/ping
+
+# Configuração de Cors (Cross-origin Resource Sharing)
+- Pasta config/cors.php
+
+- site1.com => site2.om = CORS permitir (Permissão de origens ou endereços)
+- Permissão de Metodos ou Verbos (GET, POST, PUT, etc.)
+- Permissão de Cabecalho de requisição (Headers)
+
+# Criar controllers 
+- php artisan make:controller ApiController
+- php artisan make:controller AuthController
+
+# Criar Models
+- php artisan make:model Todo
+
+# Criar Migrations
+- php artisan make:migration create_todo_table --create=todos
+- php artisan make:migration create_user_table --create=users
+
+# Roda a Migration
+- php artisan migrate
+
+# Criar um banco de dados e configurar o arquivo .env
+  DB_CONNECTION=mysql
+  DB_HOST=127.0.0.1
+  DB_PORT=3306
+  DB_DATABASE=todolist
+  DB_USERNAME=root
+  DB_PASSWORD=
+
+# Configuração da Linguagem de tradução de mensagens de error
+- pasta config/app.php
+- 'locale' => 'pt-BR'
+- pasta resources/lan
+- criar outra pastar resources/pt-BR e faz a tradução do arquivo validation.php
+
+# Biblioteca de autenticação (Sanctum)
+- composer require laravel/sanctum
+- php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+- php artisan migrate
+
+# Entrar na pasta
+- App/Http/Kenel
+- descomenta o código em Api
+-   \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+
+# Biblioteca de autenticação (tymon/jwt-auth)
+- composer require tymon/jwt-auth  "^1.0"
+- php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+- php artisan jwt:secret
+
+# Configurar o arquivo 
+- pasta config/auth.php 
+
+'defaults' => [
+    'guard' => 'api',
+    'passwords' => 'users',
+],
+
+...
+
+'guards' => [
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+    ],
+],
+
+# Configurar o Model User
+- use Tymon\JWTAuth\Contracts\JWTSubject;
+
+class User extends Authenticatable implements JWTSubject
+{
+    use HasFactory, Notifiable;
+
+    protected $hidden = [
+        'password',
+    ];
+
+    public $timestamps = false;
+
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+}
